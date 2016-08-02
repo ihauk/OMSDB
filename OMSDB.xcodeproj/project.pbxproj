@@ -13,6 +13,12 @@
 		36EEA0531D4C7EBD007AF391 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 36EEA0511D4C7EBD007AF391 /* Main.storyboard */; };
 		36EEA0551D4C7EBD007AF391 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 36EEA0541D4C7EBD007AF391 /* Assets.xcassets */; };
 		36EEA0581D4C7EBD007AF391 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 36EEA0561D4C7EBD007AF391 /* LaunchScreen.storyboard */; };
+		36EEA0611D4C7EF0007AF391 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 36EEA0601D4C7EF0007AF391 /* libsqlite3.tbd */; };
+		36EEA0641D4C7F11007AF391 /* OMSDBSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 36EEA0631D4C7F11007AF391 /* OMSDBSession.m */; };
+		36EEA0671D4C7FB9007AF391 /* OMSDBObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 36EEA0661D4C7FB9007AF391 /* OMSDBObject.m */; };
+		36EEA06A1D4C852F007AF391 /* UserObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 36EEA0691D4C852F007AF391 /* UserObject.m */; };
+		36EEA06D1D4EF9A9007AF391 /* OMSDBSQLQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 36EEA06C1D4EF9A9007AF391 /* OMSDBSQLQueue.m */; };
+		36EEA0701D4F1D58007AF391 /* OMSDBSQLMaker.m in Sources */ = {isa = PBXBuildFile; fileRef = 36EEA06F1D4F1D58007AF391 /* OMSDBSQLMaker.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +32,17 @@
 		36EEA0541D4C7EBD007AF391 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		36EEA0571D4C7EBD007AF391 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		36EEA0591D4C7EBD007AF391 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		36EEA0601D4C7EF0007AF391 /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
+		36EEA0621D4C7F11007AF391 /* OMSDBSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMSDBSession.h; sourceTree = "<group>"; };
+		36EEA0631D4C7F11007AF391 /* OMSDBSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMSDBSession.m; sourceTree = "<group>"; };
+		36EEA0651D4C7FB9007AF391 /* OMSDBObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMSDBObject.h; sourceTree = "<group>"; };
+		36EEA0661D4C7FB9007AF391 /* OMSDBObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMSDBObject.m; sourceTree = "<group>"; };
+		36EEA0681D4C852F007AF391 /* UserObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserObject.h; sourceTree = "<group>"; };
+		36EEA0691D4C852F007AF391 /* UserObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserObject.m; sourceTree = "<group>"; };
+		36EEA06B1D4EF9A9007AF391 /* OMSDBSQLQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMSDBSQLQueue.h; sourceTree = "<group>"; };
+		36EEA06C1D4EF9A9007AF391 /* OMSDBSQLQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMSDBSQLQueue.m; sourceTree = "<group>"; };
+		36EEA06E1D4F1D58007AF391 /* OMSDBSQLMaker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMSDBSQLMaker.h; sourceTree = "<group>"; };
+		36EEA06F1D4F1D58007AF391 /* OMSDBSQLMaker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMSDBSQLMaker.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -33,6 +50,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				36EEA0611D4C7EF0007AF391 /* libsqlite3.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -42,6 +60,7 @@
 		36EEA03C1D4C7EBD007AF391 = {
 			isa = PBXGroup;
 			children = (
+				36EEA0601D4C7EF0007AF391 /* libsqlite3.tbd */,
 				36EEA0471D4C7EBD007AF391 /* OMSDB */,
 				36EEA0461D4C7EBD007AF391 /* Products */,
 			);
@@ -58,6 +77,7 @@
 		36EEA0471D4C7EBD007AF391 /* OMSDB */ = {
 			isa = PBXGroup;
 			children = (
+				36EEA05F1D4C7EC5007AF391 /* OMSDB */,
 				36EEA04B1D4C7EBD007AF391 /* AppDelegate.h */,
 				36EEA04C1D4C7EBD007AF391 /* AppDelegate.m */,
 				36EEA04E1D4C7EBD007AF391 /* ViewController.h */,
@@ -77,6 +97,23 @@
 				36EEA0491D4C7EBD007AF391 /* main.m */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		36EEA05F1D4C7EC5007AF391 /* OMSDB */ = {
+			isa = PBXGroup;
+			children = (
+				36EEA0621D4C7F11007AF391 /* OMSDBSession.h */,
+				36EEA0631D4C7F11007AF391 /* OMSDBSession.m */,
+				36EEA0651D4C7FB9007AF391 /* OMSDBObject.h */,
+				36EEA0661D4C7FB9007AF391 /* OMSDBObject.m */,
+				36EEA06B1D4EF9A9007AF391 /* OMSDBSQLQueue.h */,
+				36EEA06C1D4EF9A9007AF391 /* OMSDBSQLQueue.m */,
+				36EEA0681D4C852F007AF391 /* UserObject.h */,
+				36EEA0691D4C852F007AF391 /* UserObject.m */,
+				36EEA06E1D4F1D58007AF391 /* OMSDBSQLMaker.h */,
+				36EEA06F1D4F1D58007AF391 /* OMSDBSQLMaker.m */,
+			);
+			path = OMSDB;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -151,8 +188,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				36EEA0501D4C7EBD007AF391 /* ViewController.m in Sources */,
+				36EEA06D1D4EF9A9007AF391 /* OMSDBSQLQueue.m in Sources */,
+				36EEA06A1D4C852F007AF391 /* UserObject.m in Sources */,
 				36EEA04D1D4C7EBD007AF391 /* AppDelegate.m in Sources */,
+				36EEA0641D4C7F11007AF391 /* OMSDBSession.m in Sources */,
 				36EEA04A1D4C7EBD007AF391 /* main.m in Sources */,
+				36EEA0671D4C7FB9007AF391 /* OMSDBObject.m in Sources */,
+				36EEA0701D4F1D58007AF391 /* OMSDBSQLMaker.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -303,6 +345,7 @@
 				36EEA05E1D4C7EBD007AF391 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

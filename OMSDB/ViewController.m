@@ -7,7 +7,10 @@
 //
 
 #import "ViewController.h"
+#import "UserObject.h"
+#import "OMSDBSession.h"
 
+#define varString(var) [NSString stringWithFormat:@"%s",#var]
 @interface ViewController ()
 
 @end
@@ -17,11 +20,17 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
+    UserObject *obj = [[UserObject alloc] init];
+//    [obj propertyNameMappedDBTableFileds];
+//    [obj getProrertyList];
+    NSString *documentsPath = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents"];
+    documentsPath = [documentsPath stringByAppendingPathComponent:@"DB"];
+    
+    [[OMSDBSession sharedInstance] configDBSessionWithPath:documentsPath dbName:@"db.db"];
+    [[OMSDBSession sharedInstance] saveObject:obj];
+    
+//    [obj mapProperty:obj.userName tableField:@"user_name"];
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
 
 @end
