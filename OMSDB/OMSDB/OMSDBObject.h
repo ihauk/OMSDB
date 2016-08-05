@@ -29,7 +29,7 @@ typedef NS_ENUM(NSUInteger, OMSDBObjectOperatType) {
 
 @protocol OMSDBObjectProtocol <NSObject>
 
-- (NSString*)tableNameForObject;
++ (NSString*)tableNameForObject;
 
 - (void)propertyNameMappedDBTableFileds;
 
@@ -42,11 +42,30 @@ typedef NS_ENUM(NSUInteger, OMSDBObjectOperatType) {
 
 - (NSArray *)getProrertyList;
 
+//FIXME: 修改传入的字符串
 - (void)mapProperty:(NSString*)propertyRef tableField:(NSString*)fieldName;
+
++ (NSString *)convertOCTypeToSQLType:(NSString *)oc_type ;
+
+//FIXME: 修改传入的字符串，用上去不是很爽
+- (void)markPropertyAsQuery:(NSString*)property;
+
+/**
+ *  CRUD
+ *
+ */
 
 - (NSString*)buildCreateSQLString;
 
-- (OMSDBSQL*)buildInsertSQL ;
+- (NSString*)buildInsertSQL ;
+
++ (NSString*)buildSelectAllSQL;
+
+- (NSString*)buildFetchObjectSQL;
+
+
+- (NSString*)buildDeleteObjectSQL;
++ (NSString*)buildDeleteAllObjectSQL;
 
 @end
 

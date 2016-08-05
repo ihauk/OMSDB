@@ -9,11 +9,15 @@
 #import "OMSDBObject.h"
 #import "OMSDBSQLMaker.h"
 
-#define varString(var) [NSString stringWithFormat:@"%s",#var]
+//#define varString(var) [NSString stringWithFormat:@"%s",#var]
 
 #define kCreateTableSQL @"CREATE TABLE IF NOT EXISTS "
 
 #define kInsertSQL @"INSERT OR REPLACE INTO "
+
+#define kFetchObjectSQL @"SELECT * FROM "
+
+#define kDeleteObjectSQL @"DELETE FROM "
 
 @implementation OCObjectProperty
 
@@ -23,6 +27,7 @@
 @interface OMSDBObject ()
 
 @property(nonatomic,strong) NSMutableDictionary *mapingDic;
+@property(nonatomic,strong) NSMutableArray *markedQueryPropertyArr;
 
 @end
 
@@ -48,8 +53,6 @@
         oc_property.propertyName = name;
         oc_property.propertyType = [self getAttributesWith:type];
         
-//        NSLog(@"property = %@",name);
-//        NSLog(@"field = %@",_mapingDic[name]);
         NSAssert(![name isEqualToString:@"index"], @"禁止在model中使用index作为属性,否则会引起语法错误");
         
         if ([name isEqualToString:@"hash"]) {
@@ -64,14 +67,15 @@
 }
 
 #pragma mark -
-#pragma mark - private 
+#pragma mark - create table
+
 
 - (NSString*)buildCreateSQLString {
     // 设置 property 与 db 字段的映射
     [self propertyNameMappedDBTableFileds];
     
     
-    NSString *tableName = [self tableNameForObject];
+    NSString *tableName = [[self class] tableNameForObject];
     
     __block NSString *createSql = kCreateTableSQL;
     createSql = [createSql stringByAppendingString:tableName];
@@ -87,7 +91,7 @@
         }
         if (tableField) {
             
-            createSql = [createSql stringByAppendingString:[NSString stringWithFormat:@" %@ %@",tableField,[self convertOCTypeToSQLType:oc_property.propertyType]]];
+            createSql = [createSql stringByAppendingString:[NSString stringWithFormat:@" %@ %@",tableField,[[self class ]convertOCTypeToSQLType:oc_property.propertyType]]];
             if (idx != propertyNames.count-1) {
                 createSql = [createSql stringByAppendingString:@","];
             }
@@ -101,57 +105,197 @@
     return createSql;
 }
 
-- (OMSDBSQL*)buildInsertSQL {
+
+#pragma mark -
+#pragma mark - insert
+
+- (NSString*)buildInsertSQL {
     // 设置 property 与 db 字段的映射
     [self propertyNameMappedDBTableFileds];
     
-    __block OMSDBSQL *sqlObj = [[OMSDBSQL alloc] init];
+    NSString *tableName = [[self class] tableNameForObject];
     
-    NSString *tableName = [self tableNameForObject];
     __block NSString *insertSql = kInsertSQL;
     insertSql = [insertSql stringByAppendingString:tableName];
-    
-    sqlObj.headerCmdSQL = insertSql;
-    
-//    insertSql = [insertSql stringByAppendingString:@" ("];
+    insertSql = [insertSql stringByAppendingString:@" ("];
     
     NSArray *propertyNames = [self getProrertyList];
     
+    __block NSString *fieldKeys = @"";
+    __block NSString *fieldValues = @"";
     [propertyNames enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         
         OCObjectProperty *oc_property = (OCObjectProperty*)obj;
         
-        
-        OMSDBSQLParam *tmp = [[OMSDBSQLParam alloc] init];
-        tmp.index = idx;
-        tmp.propertyName = oc_property.propertyName;
-        
         NSString *tableField = [self getTableFieldByProperty:oc_property.propertyName];
         if (!tableField) {
-            tableField = obj;
+            tableField = oc_property.propertyName;
         }
-        tmp.tableField = tableField;
-        tmp.fieldType = [self convertOCTypeToSQLType:oc_property.propertyType];
-        [sqlObj.paramArrray addObject:tmp];
+        
+        fieldKeys = [fieldKeys stringByAppendingString:[NSString stringWithFormat:@" %@ ",tableField]];
+        if (idx != propertyNames.count-1) {
+            fieldKeys = [fieldKeys stringByAppendingString:@","];
+        }
+        
+        id valu = [self valueForKey:oc_property.propertyName];
+        
+        fieldValues = [fieldValues stringByAppendingString:[NSString stringWithFormat:@" '%@' ",valu]];
+        if (idx != propertyNames.count-1) {
+            fieldValues = [fieldValues stringByAppendingString:@","];
+        }
         
     }];
     
+    insertSql = [insertSql stringByAppendingString:fieldKeys];
+    insertSql = [insertSql stringByAppendingString:@" ) values ("];
+    insertSql = [insertSql stringByAppendingString:fieldValues];
+    insertSql = [insertSql stringByAppendingString:@" );"];
     
-//    insertSql = [insertSql stringByAppendingString:@" ) "];
-//    insertSql = [insertSql stringByAppendingString:@" values ("];
-//    for (int i = 0; i< propertyNames.count; i++) {
-//        insertSql = [insertSql stringByAppendingString:@" ? "];
-//        if (i != propertyNames.count-1) {
-//            insertSql = [insertSql stringByAppendingString:@","];
-//        }
-//    }
-//    insertSql = [insertSql stringByAppendingString:@" );"];
-//    
-//    
-//    NSLog(@"sql --- %@ ",insertSql);
+    NSLog(@"sql --- %@ ",insertSql);
     
-    return sqlObj;
+    return insertSql;
 }
+
+#pragma mark -
+#pragma mark - select 
+
++ (NSString*)buildSelectAllSQL {
+    
+    NSString *tableName = [self tableNameForObject];
+    NSString *selectALlSql = kFetchObjectSQL;
+    selectALlSql = [selectALlSql stringByAppendingString:tableName];
+    selectALlSql = [selectALlSql stringByAppendingString:@";"];
+    NSLog(@"sql --- %@ ",selectALlSql);
+    
+    return selectALlSql;
+}
+
+- (NSString*)buildFetchObjectSQL {
+    // 设置 property 与 db 字段的映射
+    [self propertyNameMappedDBTableFileds];
+    
+    NSString *tableName = [[self class] tableNameForObject];
+    
+    __block NSString *insertSql = kFetchObjectSQL;
+    insertSql = [insertSql stringByAppendingString:tableName];
+    insertSql = [insertSql stringByAppendingString:@" where "];
+    
+    NSArray *propertyNames = [self getProrertyList];
+    
+    __block NSMutableString *queryParam = [NSMutableString string];
+    
+    [_markedQueryPropertyArr enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        NSString *tableField = [self getTableFieldByProperty:obj];
+        if (!tableField) {
+            tableField = obj;
+        }
+        
+        id valu = [self valueForKey:obj];
+        
+        if (valu != nil) {
+            NSString* fieldKey = [NSString stringWithFormat:@" %@ ",tableField];
+            
+            NSString* fieldValue = [NSString stringWithFormat:@" '%@' ",valu];
+            [queryParam appendString:[NSString stringWithFormat:@"%@=%@",fieldKey,fieldValue]];
+            if (idx != _markedQueryPropertyArr.count-1) {
+                [queryParam appendString:@" and "];
+            }
+        }
+    }];
+    
+//    [propertyNames enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+//        
+//        OCObjectProperty *oc_property = (OCObjectProperty*)obj;
+//        
+//        NSString *tableField = [self getTableFieldByProperty:oc_property.propertyName];
+//        if (!tableField) {
+//            tableField = oc_property.propertyName;
+//        }
+//        
+//        
+//        id valu = [self valueForKey:oc_property.propertyName];
+//        
+//        if (valu != nil) {
+//            NSString* fieldKey = [NSString stringWithFormat:@" %@ ",tableField];
+//            
+//            NSString* fieldValue = [NSString stringWithFormat:@" '%@' ",valu];
+//            [queryParam appendString:[NSString stringWithFormat:@"%@=%@",fieldKey,fieldValue]];
+//            if (idx != propertyNames.count-1) {
+//                [queryParam appendString:@" and "];
+//            }
+//        }
+//        
+//    }];
+    
+//    NSRange rang = NSMakeRange(queryParam.length-@"and".length-1, @"and".length+1);
+//    [queryParam deleteCharactersInRange:rang];
+    
+    insertSql = [insertSql stringByAppendingString:queryParam];
+    insertSql = [insertSql stringByAppendingString:@";"];
+    
+    NSLog(@"sql --- %@ ",insertSql);
+    
+    return insertSql;
+}
+
+
+#pragma mark -
+#pragma mark - delete
+
+- (NSString*)buildDeleteObjectSQL {
+    
+    NSString *tableName = [[self class] tableNameForObject];
+    
+    NSString *deleteSQL = kDeleteObjectSQL;
+    deleteSQL = [deleteSQL stringByAppendingString:tableName];
+    deleteSQL = [deleteSQL stringByAppendingString:@" where "];
+    
+    __block NSMutableString *queryParam = [NSMutableString string];
+    
+    [_markedQueryPropertyArr enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        NSString *tableField = [self getTableFieldByProperty:obj];
+        if (!tableField) {
+            tableField = obj;
+        }
+        
+        id valu = [self valueForKey:obj];
+        
+        if (valu != nil) {
+            NSString* fieldKey = [NSString stringWithFormat:@" %@ ",tableField];
+            
+            NSString* fieldValue = [NSString stringWithFormat:@" '%@' ",valu];
+            [queryParam appendString:[NSString stringWithFormat:@"%@=%@",fieldKey,fieldValue]];
+            if (idx != _markedQueryPropertyArr.count-1) {
+                [queryParam appendString:@" and "];
+            }
+        }
+    }];
+    
+    deleteSQL = [deleteSQL stringByAppendingString:queryParam];
+    deleteSQL = [deleteSQL stringByAppendingString:@";"];
+    
+    NSLog(@"sql --- %@ ",deleteSQL);
+    
+    return deleteSQL;
+}
+
+
++ (NSString *)buildDeleteAllObjectSQL {
+    NSString *tableName = [[self class] tableNameForObject];
+    
+    NSString *deleteSQL = kDeleteObjectSQL;
+    deleteSQL = [deleteSQL stringByAppendingString:tableName];
+    deleteSQL = [deleteSQL stringByAppendingString:@";"];
+    
+    NSLog(@"sql --- %@ ",deleteSQL);
+    
+    return deleteSQL;
+}
+
+
+
+
+
 
 -(void)mapProperty:(NSString* )propertyRef tableField:(NSString *)fieldName
 {
@@ -163,12 +307,20 @@
     [_mapingDic setObject:fieldName forKey:propertyRef];
 }
 
+- (void)markPropertyAsQuery:(NSString *)property{
+    if (!_markedQueryPropertyArr) {
+        _markedQueryPropertyArr = [NSMutableArray array];
+    }
+    
+    [_markedQueryPropertyArr addObject:property];
+}
+
 - (NSString*)getTableFieldByProperty:(NSString*)propertyName {
     
     return _mapingDic[propertyName];
 }
 
-- (NSString *)convertOCTypeToSQLType:(NSString *)oc_type {
++ (NSString *)convertOCTypeToSQLType:(NSString *)oc_type {
     if ([oc_type isEqualToString:@"long"] || [oc_type isEqualToString:@"int"] || [oc_type isEqualToString:@"BOOL"]) {
         return @"integer";
     }
@@ -219,7 +371,7 @@
 #pragma mark -
 #pragma mark - OMSDBObjectProtocol
 
-- (NSString *)tableNameForObject {
++ (NSString *)tableNameForObject {
     
     NSAssert(NO, @"子类必须实现该方法！！！,告诉我这个类的 object 要存入那个 table");
     return @"";
@@ -229,6 +381,20 @@
     
 }
 
+
+#pragma mark -
+#pragma mark - desctrition
+
+-(NSString *)description {
+    NSArray *array =  [self getProrertyList];
+    __block NSString *des = @"";
+    [array enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        OCObjectProperty* or = obj;
+        des = [des stringByAppendingString:[NSString stringWithFormat:@"%@ = %@, ",or.propertyName,[self valueForKey:or.propertyName]]];
+    }];
+    
+    return des;
+}
 
 
 

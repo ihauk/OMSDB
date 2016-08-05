@@ -17,7 +17,7 @@
     
 }
 
-- (NSString *)tableNameForObject {
++ (NSString *)tableNameForObject {
     
     return @"t_user";
 }

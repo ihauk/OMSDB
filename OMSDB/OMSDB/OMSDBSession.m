@@ -9,7 +9,6 @@
 #import "OMSDBSession.h"
 #import "OMSDBObject.h"
 #import <sqlite3.h>
-#import "OMSDBSQLQueue.h"
 #import "OMSDBSQLMaker.h"
 
 @interface OMSDBSession ()
@@ -63,44 +62,92 @@
 }
 
 #pragma mark -
-#pragma mark - crud
+#pragma mark - insert
 
 - (BOOL)saveObject:(OMSDBObject*)object {
-    
-    object.operateType = enuObjectOperatTypeAdd;
     
     NSString*sqlStr = [object buildCreateSQLString];
     OMSDBSQLQueue *create = [[OMSDBSQLQueue alloc] initWithSQLStr:sqlStr];
     [_dbOperationQueue addOperation:create];
     
-    OMSDBSQL *sqlObj = [object buildInsertSQL];
-    sqlObj.dataObj = object;
-    OMSDBSQLQueue *queue = [[OMSDBSQLQueue alloc] initWithSQLObj:sqlObj];
+    NSString *insertSql = [object buildInsertSQL];
+    OMSDBSQLQueue *queue = [[OMSDBSQLQueue alloc] initWithSQLStr:insertSql];
     [_dbOperationQueue addOperation:queue];
     
     return YES;
 }
 
+#pragma mark -
+#pragma mark - delete
 
 - (BOOL)deleteObject:(OMSDBObject*)object {
+    
+    NSString *deleteSQL = [object buildDeleteObjectSQL];
+    OMSDBSQLQueue *deleteQueue = [[OMSDBSQLQueue alloc] initWithSQLStr:deleteSQL];
+    [_dbOperationQueue addOperation:deleteQueue];
     
     return YES;
 }
 
-- (void)fetchObject:(OMSDBObject*)object {
+-(BOOL)deleteTableWithObjectClass:(Class)className {
+    NSString *deleteSQL = [[className class] buildDeleteAllObjectSQL];
+    OMSDBSQLQueue *deleteQueue = [[OMSDBSQLQueue alloc] initWithSQLStr:deleteSQL];
+    [_dbOperationQueue addOperation:deleteQueue];
     
-    
+    return YES;
 }
+
+#pragma mark -
+#pragma mark - select
+
+- (NSArray<OMSDBObject*> *)fetchObjectsFromClass:(Class)className completed:(FetchCompletedBlock)complete {
+    
+    NSString *sql = [[className class] buildSelectAllSQL];
+    OMSDBSQLQueue *queue = [[OMSDBSQLQueue alloc] initWithSQLStr:sql
+                                                    sqlQueueType:enuSQLQueueTypeSQLSelect
+                                                      objectType:[className class]
+                                                        complete:^(NSArray<OMSDBObject *> *arr, NSError *error) {
+                                                          
+                                                            if (complete) {
+                                                                complete(arr,error);
+                                                            }
+                                                            NSLog(@"回来啦~");
+                                                      }];
+    
+    [_dbOperationQueue addOperation:queue];
+    
+    return nil;
+}
+
+
+//FIXME: int 类型 初始化为 0 的问题
+- (OMSDBObject*)fetchObject:(OMSDBObject*)object completed:(FetchCompletedBlock)complete{
+    
+    NSString *sql = [object buildFetchObjectSQL];
+    OMSDBSQLQueue *queue = [[OMSDBSQLQueue alloc] initWithSQLStr:sql
+                                                    sqlQueueType:enuSQLQueueTypeSQLSelect
+                                                      objectType:[object class]
+                                                        complete:^(NSArray<OMSDBObject *> *arr, NSError *error) {
+                                                            
+                                                            if (complete) {
+                                                                complete(arr,error);
+                                                            }
+                                                            NSLog(@"回来啦~");
+                                                        }];
+    
+    [_dbOperationQueue addOperation:queue];
+    return object;
+}
+
+#pragma mark -
+#pragma mark - update
+
 
 - (BOOL)updateObject:(OMSDBObject*)object {
     
     return YES;
 }
 
-- (NSArray<OMSDBObject*> *)queryObjects:(Class)class {
-    
-    return nil;
-}
 
 #pragma mark -
 #pragma mark - getter

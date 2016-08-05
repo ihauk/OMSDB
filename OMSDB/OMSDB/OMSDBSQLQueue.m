@@ -8,13 +8,8 @@
 
 #import "OMSDBSQLQueue.h"
 #import <sqlite3.h>
+#import "OMSDBObject.h"
 
-typedef NS_ENUM(NSUInteger, OMSDBSQLQueueType) {
-    enuSQLQueueTypeOpenDB,
-    enuSQLQueueTypeCloseDB,
-    enuSQLQueueTypeExecuteSqlString,
-    enuSQLQueueTypeExecuteSqlObj
-};
 
 static sqlite3 *_dbHandler;
 
@@ -24,6 +19,7 @@ static sqlite3 *_dbHandler;
 @property(nonatomic,strong) NSString *dbPath;
 @property(nonatomic,strong) NSString *sqlStr;
 @property(nonatomic,strong) OMSDBSQL *sqlObj;
+@property(nonatomic,assign) Class classType;
 @property(nonatomic,assign) OMSDBSQLQueueType queueType;
 
 
@@ -40,6 +36,17 @@ static sqlite3 *_dbHandler;
     return self;
 }
 
+-(instancetype)initWithSQLStr:(NSString*)sqlStr sqlQueueType:(OMSDBSQLQueueType)queueType objectType:(Class)classType complete:(FetchCompletedBlock)complete{
+    self = [super init];
+    if (self) {
+        self.sqlStr = sqlStr;
+        self.queueType = queueType;
+        self.classType = classType;
+        self.completeBlock = complete;
+    }
+    return self;
+}
+
 -(instancetype)initWithDBPath:(NSString*)dbPath {
     self = [super init];
     if (self) {
@@ -49,14 +56,7 @@ static sqlite3 *_dbHandler;
     return self;
 }
 
-- (instancetype)initWithSQLObj:(OMSDBSQL *)sqlobj{
-    self = [super init];
-    if (self) {
-        self.sqlObj = sqlobj;
-        self.queueType = enuSQLQueueTypeExecuteSqlObj;
-    }
-    return self;
-}
+
 
 -(void)main {
     switch (_queueType) {
@@ -70,9 +70,9 @@ static sqlite3 *_dbHandler;
             [self execteSql:_sqlStr];
         }
             break;
-        case enuSQLQueueTypeExecuteSqlObj:
+        case enuSQLQueueTypeSQLSelect:
         {
-            
+            [self executeQuerySQL:_sqlStr];
         }
             break;
         case enuSQLQueueTypeCloseDB:
@@ -107,8 +107,74 @@ static sqlite3 *_dbHandler;
     char *err;
     if (sqlite3_exec(_dbHandler, [sql UTF8String], NULL, NULL, &err) != SQLITE_OK) {
         sqlite3_close(_dbHandler);
-        NSLog(@"数据库sql操作数据失败!，%@",sql);
+        [self handleDBError:sql];
     }
+}
+
+- (void)executeQuerySQL:(NSString*)sql {
+    
+    NSMutableArray *array = [NSMutableArray array];
+    
+    sqlite3_stmt *stmt;
+    int result = sqlite3_prepare_v2(_dbHandler, sql.UTF8String, -1, &stmt, NULL);
+    if (result == SQLITE_OK) {
+        
+        while (SQLITE_ROW == sqlite3_step(stmt)) {
+            id object = [[[_classType class] alloc]init];
+            
+            NSArray *propertyArr = [object getProrertyList];
+            [propertyArr enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                OCObjectProperty *property = (OCObjectProperty*)obj;
+                id value = [self valueForColumn:idx stmt:stmt ocType:property.propertyType];
+                [object setValue:value forKey:property.propertyName];
+                
+            }];
+            
+            
+            [array addObject:object];
+        }
+        
+        NSLog(@"array : %@",array);
+        if (_completeBlock) {
+            _completeBlock(array,nil);
+        }
+    }else{
+        [self handleDBError:sql];
+    }
+}
+
+- (id)valueForColumn:(int)index stmt:(sqlite3_stmt *)stmt ocType:(NSString*)ocType{
+    
+    NSString *sqlType = [[_classType class] convertOCTypeToSQLType:ocType];
+    id value ;
+    if ([sqlType isEqualToString:@"text"]) {
+        value = [NSString stringWithUTF8String:(const char *)sqlite3_column_text(stmt, index)];
+    }
+    
+    if ([sqlType isEqualToString:@"integer"]) {
+        value = [NSNumber numberWithInt:sqlite3_column_int(stmt, index)];
+    }
+    
+    if ([sqlType isEqualToString:@"real"]) {
+        value = [NSNumber numberWithDouble:sqlite3_column_double(stmt, index)];
+    }
+    
+    if ([sqlType isEqualToString:@"blob"]) {
+        NSString *str = [NSString stringWithUTF8String:(const char *)sqlite3_column_text(stmt, index)];
+        value = [str dataUsingEncoding:NSUTF8StringEncoding];
+    }
+    
+    
+    if ([sqlType isEqualToString:@"customArr"]) {
+        
+    }
+    
+    if ([sqlType isEqualToString:@"customDict"]) {
+        
+    }
+    
+    
+    return value;
 }
 
 -(void)execteSqlObj:(OMSDBSQL *)sqlObj
@@ -151,7 +217,10 @@ static sqlite3 *_dbHandler;
 }
 
 
-
+- (void)handleDBError:(NSString*)errorSQL {
+    
+    NSLog(@"sql error: %@ === reason :%s",errorSQL,sqlite3_errmsg(_dbHandler));
+}
 
 
 @end

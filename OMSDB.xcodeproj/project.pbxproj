@@ -57,6 +57,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3639CA0E1D50A0FB00A56BFC /* depress */ = {
+			isa = PBXGroup;
+			children = (
+				36EEA06E1D4F1D58007AF391 /* OMSDBSQLMaker.h */,
+				36EEA06F1D4F1D58007AF391 /* OMSDBSQLMaker.m */,
+			);
+			name = depress;
+			sourceTree = "<group>";
+		};
 		36EEA03C1D4C7EBD007AF391 = {
 			isa = PBXGroup;
 			children = (
@@ -102,16 +111,15 @@
 		36EEA05F1D4C7EC5007AF391 /* OMSDB */ = {
 			isa = PBXGroup;
 			children = (
+				3639CA0E1D50A0FB00A56BFC /* depress */,
+				36EEA06B1D4EF9A9007AF391 /* OMSDBSQLQueue.h */,
+				36EEA06C1D4EF9A9007AF391 /* OMSDBSQLQueue.m */,
 				36EEA0621D4C7F11007AF391 /* OMSDBSession.h */,
 				36EEA0631D4C7F11007AF391 /* OMSDBSession.m */,
 				36EEA0651D4C7FB9007AF391 /* OMSDBObject.h */,
 				36EEA0661D4C7FB9007AF391 /* OMSDBObject.m */,
-				36EEA06B1D4EF9A9007AF391 /* OMSDBSQLQueue.h */,
-				36EEA06C1D4EF9A9007AF391 /* OMSDBSQLQueue.m */,
 				36EEA0681D4C852F007AF391 /* UserObject.h */,
 				36EEA0691D4C852F007AF391 /* UserObject.m */,
-				36EEA06E1D4F1D58007AF391 /* OMSDBSQLMaker.h */,
-				36EEA06F1D4F1D58007AF391 /* OMSDBSQLMaker.m */,
 			);
 			path = OMSDB;
 			sourceTree = "<group>";
