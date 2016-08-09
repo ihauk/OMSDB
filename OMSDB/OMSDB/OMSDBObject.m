@@ -34,6 +34,8 @@
 //}
 
 
+static NSMutableDictionary *mapingDic;
+
 @implementation OCObjectProperty
 
 @end
@@ -41,7 +43,7 @@
 
 @interface OMSDBObject ()
 
-@property(nonatomic,strong) NSMutableDictionary *mapingDic;
+//@property(nonatomic,strong) 
 @property(nonatomic,strong) NSMutableArray *markedQueryPropertyArr;
 
 @end
@@ -87,7 +89,7 @@
 
 - (NSString*)buildCreateSQLString {
     // 设置 property 与 db 字段的映射
-    [self propertyNameMappedDBTableFileds];
+    [[self class] propertyNameMappedDBTableFileds];
     
     
     NSString *tableName = [[self class] tableNameForObject];
@@ -100,7 +102,7 @@
     [propertyNames enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         OCObjectProperty *oc_property = (OCObjectProperty*)obj;
         
-        NSString *tableField = [self getTableFieldByProperty:oc_property.propertyName];
+        NSString *tableField = [self.class getTableFieldByProperty:oc_property.propertyName];
         if (!tableField) {
             tableField = oc_property.propertyName;
         }
@@ -126,7 +128,7 @@
 
 - (NSString*)buildInsertSQL {
     // 设置 property 与 db 字段的映射
-    [self propertyNameMappedDBTableFileds];
+    [[self class] propertyNameMappedDBTableFileds];
     
     NSString *tableName = [[self class] tableNameForObject];
     
@@ -142,7 +144,7 @@
         
         OCObjectProperty *oc_property = (OCObjectProperty*)obj;
         
-        NSString *tableField = [self getTableFieldByProperty:oc_property.propertyName];
+        NSString *tableField = [self.class getTableFieldByProperty:oc_property.propertyName];
         if (!tableField) {
             tableField = oc_property.propertyName;
         }
@@ -187,7 +189,7 @@
 
 - (NSString*)buildFetchObjectSQL {
     // 设置 property 与 db 字段的映射
-    [self propertyNameMappedDBTableFileds];
+    [[self class] propertyNameMappedDBTableFileds];
     
     NSString *tableName = [[self class] tableNameForObject];
     
@@ -200,7 +202,7 @@
     __block NSMutableString *queryParam = [NSMutableString string];
     
     [_markedQueryPropertyArr enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        NSString *tableField = [self getTableFieldByProperty:obj];
+        NSString *tableField = [self.class getTableFieldByProperty:obj];
         if (!tableField) {
             tableField = obj;
         }
@@ -258,7 +260,7 @@
 #pragma mark - delete
 
 - (NSString*)buildDeleteObjectSQL {
-    [self propertyNameMappedDBTableFileds];
+    [[self class] propertyNameMappedDBTableFileds];
     
     NSString *tableName = [[self class] tableNameForObject];
     
@@ -269,7 +271,7 @@
     __block NSMutableString *queryParam = [NSMutableString string];
     
     [_markedQueryPropertyArr enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        NSString *tableField = [self getTableFieldByProperty:obj];
+        NSString *tableField = [self.class getTableFieldByProperty:obj];
         if (!tableField) {
             tableField = obj;
         }
@@ -313,14 +315,14 @@
 
 
 
--(void)mapProperty:(NSString* )propertyRef tableField:(NSString *)fieldName
++(void)mapProperty:(NSString* )propertyRef tableField:(NSString *)fieldName
 {
-    if (!_mapingDic) {
-        _mapingDic = [NSMutableDictionary dictionary];
+    if (!mapingDic) {
+        mapingDic = [NSMutableDictionary dictionary];
     }
 //    NSString *propertyName = varString(propertyRef);
 //    NSLog(@"var == %@",propertyName);
-    [_mapingDic setObject:fieldName forKey:propertyRef];
+    [mapingDic setObject:fieldName forKey:propertyRef];
 }
 
 - (void)markPropertyAsQuery:(NSString *)property{
@@ -337,9 +339,13 @@
     [self markPropertyAsQuery:property];
 }
 
-- (NSString*)getTableFieldByProperty:(NSString*)propertyName {
++ (NSString*)getTableFieldByProperty:(NSString*)propertyName {
     
-    return _mapingDic[propertyName];
+    NSString *tableField = mapingDic[propertyName];
+    if (!tableField) {
+        tableField = propertyName;
+    }
+    return tableField;
 }
 
 + (NSString *)convertOCTypeToSQLType:(NSString *)oc_type {
@@ -399,9 +405,42 @@
     return @"";
 }
 
--(void)propertyNameMappedDBTableFileds {
++(void)propertyNameMappedDBTableFileds {
     
 }
+
+
+#pragma mark -
+#pragma mark - Condition
+
++ (OMSDBCondition *)makeConditionWithPropertyName:(NSString *)propertyName value:(id)value operater:(NSString *)operater {
+    
+    OMSDBCondition *condition = [[OMSDBCondition alloc]init];
+    condition.conditionType = enuConditionWhere;
+    
+    if (!propertyName || !value || !operater) {
+        return condition;
+    }
+    condition.conditionStr = [NSString stringWithFormat:@"%@%@'%@'",[[self class]getTableFieldByProperty:propertyName ],operater,value];
+    
+    return condition;
+}
+
++ (OMSDBCondition *)makeOerderConditionWithPropertyName:(NSString *)propertyName orderByASC:(BOOL)isASC {
+    
+    [self propertyNameMappedDBTableFileds];
+    
+    OMSDBCondition *condition = [[OMSDBCondition alloc]init];
+    condition.conditionType = enuConditionOrder;
+    
+    if (!propertyName) {
+        return condition;
+    }
+    condition.conditionStr = [NSString stringWithFormat:@" %@ %@ ",[[self class]getTableFieldByProperty:propertyName ],isASC ? @"ASC":@"DESC"];
+    
+    return condition;
+}
+
 
 
 #pragma mark -

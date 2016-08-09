@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <objc/runtime.h>
+#import "OMSDBCondition.h"
 
 @class OMSDBSQL;
 
@@ -35,7 +36,7 @@ typedef NS_ENUM(NSUInteger, OMSDBObjectOperatType) {
 
 + (NSString*)tableNameForObject;
 
-- (void)propertyNameMappedDBTableFileds;
++ (void)propertyNameMappedDBTableFileds;
 
 @end
 
@@ -47,7 +48,7 @@ typedef NS_ENUM(NSUInteger, OMSDBObjectOperatType) {
 - (NSArray *)getProrertyList;
 
 //FIXME: 修改传入的字符串
-- (void)mapProperty:(NSString*)propertyRef tableField:(NSString*)fieldName;
++ (void)mapProperty:(NSString*)propertyRef tableField:(NSString*)fieldName;
 
 + (NSString *)convertOCTypeToSQLType:(NSString *)oc_type ;
 
@@ -70,6 +71,14 @@ typedef NS_ENUM(NSUInteger, OMSDBObjectOperatType) {
 
 - (NSString*)buildDeleteObjectSQL;
 + (NSString*)buildDeleteAllObjectSQL;
+
+
++ (OMSDBCondition*)makeConditionWithPropertyName:(NSString*)propertyName
+                                           value:(id)value
+                                        operater:(NSString*)operater;
+
++ (OMSDBCondition*)makeOerderConditionWithPropertyName:(NSString*)propertyName
+                                            orderByASC:(BOOL)isASC;
 
 @end
 

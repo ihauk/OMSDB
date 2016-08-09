@@ -15,14 +15,6 @@ typedef NS_ENUM(NSUInteger, OMSDBCOnditionType) {
 
 @interface OMSDBCondition : NSObject
 
-+ (OMSDBCondition*)makeConditionWithPropertyName:(NSString*)propertyName
-                                           value:(id)value
-                                        operater:(NSString*)operater;
-
-+ (OMSDBCondition*)makeOerderConditionWithPropertyName:(NSString*)propertyName
-                                           orderByASC:(BOOL)isASC;
-
-
 @property(nonatomic,assign) OMSDBCOnditionType conditionType;
 @property(nonatomic,strong) NSString* conditionStr;
 

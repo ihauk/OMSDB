@@ -40,13 +40,13 @@
 
 
 //- (void)test0Insert {
-//    for (int i = 0; i < 100; i++) {
+//    for (int i = 0; i < 200; i++) {
 //        
 //        UserObject *obj = [[UserObject alloc] init];
 //        obj.userName = @"hauk";
 //        obj.pwd = @"www.com";
 //        obj.age = i;
-//        obj.sex = 2;
+//        obj.sex = i%2;
 //        obj.birthday = @"sss";
 //        
 //        [[OMSDBSession sharedInstance] saveObject:obj];
@@ -96,12 +96,12 @@
 
 - (void)testConditionSelect {
     
-    OMSDBCondition *con1 = [OMSDBCondition makeConditionWithPropertyName:@"age" value:@11 operater:@"<"];
-    OMSDBCondition *con2 = [OMSDBCondition makeOerderConditionWithPropertyName:@"age" orderByASC:NO];
-    OMSDBCondition *con4 = [OMSDBCondition makeOerderConditionWithPropertyName:@"sex" orderByASC:YES];
-    OMSDBCondition *con3 = [OMSDBCondition makeConditionWithPropertyName:@"sex" value:@2 operater:@"="];
+    OMSDBCondition *con1 = [UserObject makeConditionWithPropertyName:@"age" value:@11 operater:@"<" ];
+    OMSDBCondition *con2 = [UserObject makeOerderConditionWithPropertyName:@"age" orderByASC:NO];
+    OMSDBCondition *con4 = [UserObject makeOerderConditionWithPropertyName:@"sex" orderByASC:YES];
+    OMSDBCondition *con3 = [UserObject makeConditionWithPropertyName:@"userName" value:@"hauk" operater:@"="];
     
-    [[OMSDBSession sharedInstance] fetchObjectsFromClass:[UserObject class] conditions:@[con1,con2,con3,con4] completed:^(NSArray<OMSDBObject *> *array, NSError *error) {
+    [[OMSDBSession sharedInstance] fetchObjectsFromClass:[UserObject class] conditions:@[con1,con4,con3,con2] completed:^(NSArray<OMSDBObject *> *array, NSError *error) {
         NSLog(@"----- %@",array);
     }];
 }

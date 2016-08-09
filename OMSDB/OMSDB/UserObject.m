@@ -10,7 +10,7 @@
 
 @implementation UserObject
 
-- (void)propertyNameMappedDBTableFileds {
++ (void)propertyNameMappedDBTableFileds {
     
     [self mapProperty:@"userName" tableField:@"user_name"];
     [self mapProperty:@"pwd" tableField:@"password"];
