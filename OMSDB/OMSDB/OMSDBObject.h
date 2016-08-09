@@ -19,6 +19,10 @@ typedef NS_ENUM(NSUInteger, OMSDBObjectOperatType) {
 };
 
 
+
+//typedef NSString OMSDBCondition;
+//extern OMSDBCondition *makeCondition(NSString*propertyname,id value ,NSString * operate) ;
+
 @interface OCObjectProperty : NSObject
 
 @property(nonatomic,strong) NSString *propertyName;
@@ -48,7 +52,7 @@ typedef NS_ENUM(NSUInteger, OMSDBObjectOperatType) {
 + (NSString *)convertOCTypeToSQLType:(NSString *)oc_type ;
 
 //FIXME: 修改传入的字符串，用上去不是很爽
-- (void)markPropertyAsQuery:(NSString*)property;
+- (void)markPropertyAsQuery:(NSString*)property value:(id)value;
 
 /**
  *  CRUD

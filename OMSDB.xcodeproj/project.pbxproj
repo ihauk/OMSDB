@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		36635A691D597D650064D7BB /* OMSDBCondition.m in Sources */ = {isa = PBXBuildFile; fileRef = 36635A681D597D650064D7BB /* OMSDBCondition.m */; };
+		36D8E7501D548A63001BF12C /* OMSDBTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 36D8E74F1D548A63001BF12C /* OMSDBTests.m */; };
 		36EEA04A1D4C7EBD007AF391 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 36EEA0491D4C7EBD007AF391 /* main.m */; };
 		36EEA04D1D4C7EBD007AF391 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 36EEA04C1D4C7EBD007AF391 /* AppDelegate.m */; };
 		36EEA0501D4C7EBD007AF391 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 36EEA04F1D4C7EBD007AF391 /* ViewController.m */; };
@@ -21,7 +23,22 @@
 		36EEA0701D4F1D58007AF391 /* OMSDBSQLMaker.m in Sources */ = {isa = PBXBuildFile; fileRef = 36EEA06F1D4F1D58007AF391 /* OMSDBSQLMaker.m */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		36D8E7521D548A63001BF12C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 36EEA03D1D4C7EBD007AF391 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 36EEA0441D4C7EBD007AF391;
+			remoteInfo = OMSDB;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
+		36635A671D597D650064D7BB /* OMSDBCondition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMSDBCondition.h; sourceTree = "<group>"; };
+		36635A681D597D650064D7BB /* OMSDBCondition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMSDBCondition.m; sourceTree = "<group>"; };
+		36D8E74D1D548A63001BF12C /* OMSDBTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OMSDBTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		36D8E74F1D548A63001BF12C /* OMSDBTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OMSDBTests.m; sourceTree = "<group>"; };
+		36D8E7511D548A63001BF12C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		36EEA0451D4C7EBD007AF391 /* OMSDB.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OMSDB.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		36EEA0491D4C7EBD007AF391 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		36EEA04B1D4C7EBD007AF391 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -46,6 +63,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		36D8E74A1D548A63001BF12C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		36EEA0421D4C7EBD007AF391 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -66,11 +90,21 @@
 			name = depress;
 			sourceTree = "<group>";
 		};
+		36D8E74E1D548A63001BF12C /* OMSDBTests */ = {
+			isa = PBXGroup;
+			children = (
+				36D8E74F1D548A63001BF12C /* OMSDBTests.m */,
+				36D8E7511D548A63001BF12C /* Info.plist */,
+			);
+			path = OMSDBTests;
+			sourceTree = "<group>";
+		};
 		36EEA03C1D4C7EBD007AF391 = {
 			isa = PBXGroup;
 			children = (
 				36EEA0601D4C7EF0007AF391 /* libsqlite3.tbd */,
 				36EEA0471D4C7EBD007AF391 /* OMSDB */,
+				36D8E74E1D548A63001BF12C /* OMSDBTests */,
 				36EEA0461D4C7EBD007AF391 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -79,6 +113,7 @@
 			isa = PBXGroup;
 			children = (
 				36EEA0451D4C7EBD007AF391 /* OMSDB.app */,
+				36D8E74D1D548A63001BF12C /* OMSDBTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -120,6 +155,8 @@
 				36EEA0661D4C7FB9007AF391 /* OMSDBObject.m */,
 				36EEA0681D4C852F007AF391 /* UserObject.h */,
 				36EEA0691D4C852F007AF391 /* UserObject.m */,
+				36635A671D597D650064D7BB /* OMSDBCondition.h */,
+				36635A681D597D650064D7BB /* OMSDBCondition.m */,
 			);
 			path = OMSDB;
 			sourceTree = "<group>";
@@ -127,6 +164,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		36D8E74C1D548A63001BF12C /* OMSDBTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 36D8E7561D548A63001BF12C /* Build configuration list for PBXNativeTarget "OMSDBTests" */;
+			buildPhases = (
+				36D8E7491D548A63001BF12C /* Sources */,
+				36D8E74A1D548A63001BF12C /* Frameworks */,
+				36D8E74B1D548A63001BF12C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				36D8E7531D548A63001BF12C /* PBXTargetDependency */,
+			);
+			name = OMSDBTests;
+			productName = OMSDBTests;
+			productReference = 36D8E74D1D548A63001BF12C /* OMSDBTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		36EEA0441D4C7EBD007AF391 /* OMSDB */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 36EEA05C1D4C7EBD007AF391 /* Build configuration list for PBXNativeTarget "OMSDB" */;
@@ -153,6 +208,11 @@
 				LastUpgradeCheck = 0730;
 				ORGANIZATIONNAME = zhuhao;
 				TargetAttributes = {
+					36D8E74C1D548A63001BF12C = {
+						CreatedOnToolsVersion = 7.3.1;
+						DevelopmentTeam = W7MTZW2A64;
+						TestTargetID = 36EEA0441D4C7EBD007AF391;
+					};
 					36EEA0441D4C7EBD007AF391 = {
 						CreatedOnToolsVersion = 7.3.1;
 						DevelopmentTeam = W7MTZW2A64;
@@ -173,11 +233,19 @@
 			projectRoot = "";
 			targets = (
 				36EEA0441D4C7EBD007AF391 /* OMSDB */,
+				36D8E74C1D548A63001BF12C /* OMSDBTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		36D8E74B1D548A63001BF12C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		36EEA0431D4C7EBD007AF391 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -191,6 +259,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		36D8E7491D548A63001BF12C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				36D8E7501D548A63001BF12C /* OMSDBTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		36EEA0411D4C7EBD007AF391 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -200,6 +276,7 @@
 				36EEA06A1D4C852F007AF391 /* UserObject.m in Sources */,
 				36EEA04D1D4C7EBD007AF391 /* AppDelegate.m in Sources */,
 				36EEA0641D4C7F11007AF391 /* OMSDBSession.m in Sources */,
+				36635A691D597D650064D7BB /* OMSDBCondition.m in Sources */,
 				36EEA04A1D4C7EBD007AF391 /* main.m in Sources */,
 				36EEA0671D4C7FB9007AF391 /* OMSDBObject.m in Sources */,
 				36EEA0701D4F1D58007AF391 /* OMSDBSQLMaker.m in Sources */,
@@ -207,6 +284,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		36D8E7531D548A63001BF12C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 36EEA0441D4C7EBD007AF391 /* OMSDB */;
+			targetProxy = 36D8E7521D548A63001BF12C /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		36EEA0511D4C7EBD007AF391 /* Main.storyboard */ = {
@@ -228,6 +313,30 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		36D8E7541D548A63001BF12C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				INFOPLIST_FILE = OMSDBTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.hauk.OMSDBTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/OMSDB.app/OMSDB";
+			};
+			name = Debug;
+		};
+		36D8E7551D548A63001BF12C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				INFOPLIST_FILE = OMSDBTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.hauk.OMSDBTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/OMSDB.app/OMSDB";
+			};
+			name = Release;
+		};
 		36EEA05A1D4C7EBD007AF391 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -337,6 +446,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		36D8E7561D548A63001BF12C /* Build configuration list for PBXNativeTarget "OMSDBTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				36D8E7541D548A63001BF12C /* Debug */,
+				36D8E7551D548A63001BF12C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		36EEA0401D4C7EBD007AF391 /* Build configuration list for PBXProject "OMSDB" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

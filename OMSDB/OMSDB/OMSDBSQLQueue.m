@@ -59,31 +59,42 @@ static sqlite3 *_dbHandler;
 
 
 -(void)main {
-    switch (_queueType) {
-        case enuSQLQueueTypeOpenDB:
-        {
-            [self openDB];
+    [super main];
+    NSLog(@"come on ");
+    @try {
+        
+        switch (_queueType) {
+            case enuSQLQueueTypeOpenDB:
+            {
+                [self openDB];
+            }
+                break;
+            case enuSQLQueueTypeExecuteSqlString:
+            {
+                [self execteSql:_sqlStr];
+            }
+                break;
+            case enuSQLQueueTypeSQLSelect:
+            {
+                [self executeQuerySQL:_sqlStr];
+            }
+                break;
+            case enuSQLQueueTypeCloseDB:
+            {
+                [self closeDB];
+            }
+                break;
+                
+            default:
+                break;
         }
-            break;
-        case enuSQLQueueTypeExecuteSqlString:
-        {
-            [self execteSql:_sqlStr];
-        }
-            break;
-        case enuSQLQueueTypeSQLSelect:
-        {
-            [self executeQuerySQL:_sqlStr];
-        }
-            break;
-        case enuSQLQueueTypeCloseDB:
-        {
-            [self closeDB];
-        }
-            break;
-            
-        default:
-            break;
+
+        
+    } @catch (NSException *exception) {
+        NSLog(@"Exception: %@", exception);
     }
+    
+    NSLog(@"^^run queue %@",_sqlStr);
 }
 
 - (BOOL)openDB {
@@ -134,7 +145,6 @@ static sqlite3 *_dbHandler;
             [array addObject:object];
         }
         
-        NSLog(@"array : %@",array);
         if (_completeBlock) {
             _completeBlock(array,nil);
         }

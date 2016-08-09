@@ -20,46 +20,12 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
-    UserObject *obj = [[UserObject alloc] init];
-    obj.userName = @"hauk";
-    obj.pwd = @"www.com";
-    obj.age = 10;
-    obj.sex = 1;
-    obj.birthday = @"sss";
-//    [obj propertyNameMappedDBTableFileds];
-//    [obj getProrertyList];
-    NSString *documentsPath = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents"];
-    documentsPath = [documentsPath stringByAppendingPathComponent:@"DB"];
     
-    [[OMSDBSession sharedInstance] configDBSessionWithPath:documentsPath dbName:@"db.db"];
-    
-    
-    [[OMSDBSession sharedInstance] saveObject:obj];
-//    [[OMSDBSession sharedInstance] fetchObjectsFromClass:[UserObject class] completed:^(NSArray<OMSDBObject *> *obj, NSError *error) {
-//        
+//    OMSDBCondition *con1 = [OMSDBCondition makeConditionWithPropertyName:@"age" value:@11 operater:@"<"];
+//    
+//    [[OMSDBSession sharedInstance] fetchObjectsFromClass:[UserObject class] conditions:@[con1] completed:^(NSArray<OMSDBObject *> *array, NSError *error) {
+//        NSLog(@"----- %@",array);
 //    }];
-    
-    
-    
-    UserObject *fo = [[UserObject alloc]init];
-    fo.userName = @"duola";
-    fo.sex = 2;
-    [fo markPropertyAsQuery:@"userName"];
-    [fo markPropertyAsQuery:@"sex"];
-    
-    [[OMSDBSession sharedInstance] fetchObject:fo completed:^(NSArray<OMSDBObject *> *obj, NSError *error) {
-        
-    }];
-    
-//    UserObject *deleObj = [[UserObject alloc] init];
-//    deleObj.userName = @"hauk";
-//    deleObj.sex = 1;
-//    [deleObj markPropertyAsQuery:@"userName"];
-//    [deleObj markPropertyAsQuery:@"sex"];
-//    [[OMSDBSession sharedInstance] deleteObject:deleObj];
-    
-    [[OMSDBSession sharedInstance] deleteTableWithObjectClass:[UserObject class]];
-    
 }
 
 

@@ -19,6 +19,21 @@
 
 #define kDeleteObjectSQL @"DELETE FROM "
 
+
+
+
+//OMSDBCondition *makeCondition(NSString*propertyname,id value ,NSString * operate) {
+//    
+//    OMSDBCondition *condition = @"";
+//    if (!propertyname || !value || !operate) {
+//        return condition;
+//    }
+//    condition = [NSString stringWithFormat:@"%@%@'%@'",propertyname,operate,value];
+//    
+//    return condition;
+//}
+
+
 @implementation OCObjectProperty
 
 @end
@@ -243,6 +258,7 @@
 #pragma mark - delete
 
 - (NSString*)buildDeleteObjectSQL {
+    [self propertyNameMappedDBTableFileds];
     
     NSString *tableName = [[self class] tableNameForObject];
     
@@ -315,6 +331,12 @@
     [_markedQueryPropertyArr addObject:property];
 }
 
+-(void)markPropertyAsQuery:(NSString *)property value:(id)value {
+    [self setValue:value forKey:property];
+    
+    [self markPropertyAsQuery:property];
+}
+
 - (NSString*)getTableFieldByProperty:(NSString*)propertyName {
     
     return _mapingDic[propertyName];
@@ -385,7 +407,9 @@
 #pragma mark -
 #pragma mark - desctrition
 
+#ifdef DEBUG
 -(NSString *)description {
+    
     NSArray *array =  [self getProrertyList];
     __block NSString *des = @"";
     [array enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -395,7 +419,6 @@
     
     return des;
 }
-
-
+#endif
 
 @end

@@ -10,6 +10,7 @@
 #import "OMSDBObject.h"
 #import <sqlite3.h>
 #import "OMSDBSQLMaker.h"
+#import "OMSDBCondition.h"
 
 @interface OMSDBSession ()
 //@property(nonatomic) sqlite3 *dbHandler;
@@ -57,7 +58,7 @@
     _dbPath = [dbPath stringByAppendingString:[NSString stringWithFormat:@"/%@",_dbName]];
     
     OMSDBSQLQueue *queue = [[OMSDBSQLQueue alloc]initWithDBPath:_dbPath];
-    [self.dbOperationQueue addOperation:queue];
+    [self addOperationToQueue:queue];
     
 }
 
@@ -66,13 +67,13 @@
 
 - (BOOL)saveObject:(OMSDBObject*)object {
     
-    NSString*sqlStr = [object buildCreateSQLString];
-    OMSDBSQLQueue *create = [[OMSDBSQLQueue alloc] initWithSQLStr:sqlStr];
-    [_dbOperationQueue addOperation:create];
+//    NSString*sqlStr = [object buildCreateSQLString];
+//    OMSDBSQLQueue *create = [[OMSDBSQLQueue alloc] initWithSQLStr:sqlStr];
+//    [self addOperationToQueue:create];
     
     NSString *insertSql = [object buildInsertSQL];
     OMSDBSQLQueue *queue = [[OMSDBSQLQueue alloc] initWithSQLStr:insertSql];
-    [_dbOperationQueue addOperation:queue];
+    [self addOperationToQueue:queue];
     
     return YES;
 }
@@ -84,15 +85,16 @@
     
     NSString *deleteSQL = [object buildDeleteObjectSQL];
     OMSDBSQLQueue *deleteQueue = [[OMSDBSQLQueue alloc] initWithSQLStr:deleteSQL];
-    [_dbOperationQueue addOperation:deleteQueue];
     
+    [self addOperationToQueue:deleteQueue];
     return YES;
 }
 
 -(BOOL)deleteTableWithObjectClass:(Class)className {
     NSString *deleteSQL = [[className class] buildDeleteAllObjectSQL];
     OMSDBSQLQueue *deleteQueue = [[OMSDBSQLQueue alloc] initWithSQLStr:deleteSQL];
-    [_dbOperationQueue addOperation:deleteQueue];
+    
+    [self addOperationToQueue:deleteQueue];
     
     return YES;
 }
@@ -114,7 +116,7 @@
                                                             NSLog(@"回来啦~");
                                                       }];
     
-    [_dbOperationQueue addOperation:queue];
+    [self addOperationToQueue:queue];
     
     return nil;
 }
@@ -135,8 +137,62 @@
                                                             NSLog(@"回来啦~");
                                                         }];
     
-    [_dbOperationQueue addOperation:queue];
+    [self addOperationToQueue:queue];
     return object;
+}
+
+-(void )fetchObjectsFromClass:(Class)className conditions:(NSArray<OMSDBCondition*> *)conditions completed:(FetchCompletedBlock)complete {
+    
+    NSString *sql = [[className class] buildSelectAllSQL];
+    
+    if (conditions && conditions.count >= 1) {
+        
+        NSUInteger count = conditions.count;
+        __block NSString *whereConditions = @"";
+        __block NSString *orderConditions = @"";
+        [conditions enumerateObjectsUsingBlock:^(OMSDBCondition * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            if (obj.conditionType == enuConditionWhere) {
+                whereConditions = [whereConditions stringByAppendingString:obj.conditionStr];
+                
+                    whereConditions = [whereConditions stringByAppendingString:@" and "];
+                
+            }
+            if (obj.conditionType == enuConditionOrder) {
+                orderConditions = [orderConditions stringByAppendingString:obj.conditionStr];
+                
+                    orderConditions = [orderConditions stringByAppendingString:@","];
+                
+            }
+            
+        }];
+        
+        sql = [sql stringByReplacingOccurrencesOfString:@";" withString:@" "];
+        if (whereConditions.length > 0) {
+            sql = [sql stringByAppendingString:@" where "];
+            whereConditions = [whereConditions substringToIndex:whereConditions.length-4];
+            sql = [sql stringByAppendingString:whereConditions];
+        }
+        if (orderConditions.length > 0) {
+            sql = [sql stringByAppendingString:@" order by "];
+            orderConditions = [orderConditions substringToIndex:orderConditions.length-1];
+            sql = [sql stringByAppendingString:orderConditions];
+        }
+        
+        sql = [sql stringByAppendingString:@";"];
+    }
+    
+    OMSDBSQLQueue *queue = [[OMSDBSQLQueue alloc] initWithSQLStr:sql
+                                                    sqlQueueType:enuSQLQueueTypeSQLSelect
+                                                      objectType:[className class]
+                                                        complete:^(NSArray<OMSDBObject *> *arr, NSError *error) {
+                                                            
+                                                            if (complete) {
+                                                                complete(arr,error);
+                                                            }
+                                                            NSLog(@"回来啦~");
+                                                        }];
+    
+    [self addOperationToQueue:queue];
 }
 
 #pragma mark -
@@ -148,6 +204,14 @@
     return YES;
 }
 
+#pragma mark -
+#pragma mark - custom sql 
+
+-(void)exxcuteCustomSQL:(NSString *)sqlStr {
+    
+}
+
+
 
 #pragma mark -
 #pragma mark - getter
@@ -155,10 +219,21 @@
 -(NSOperationQueue *)dbOperationQueue {
     if (!_dbOperationQueue) {
         _dbOperationQueue = [[NSOperationQueue alloc] init];
-        _dbOperationQueue.maxConcurrentOperationCount =1 ;
+        _dbOperationQueue.maxConcurrentOperationCount = 1 ;
     }
     
     return _dbOperationQueue;
+}
+
+- (void)addOperationToQueue:(NSOperation*)operation {
+//    NSOperation* lastOp = self.dbOperationQueue.operations.lastObject;
+//    if ( lastOp != nil ){
+//        
+//        [ operation addDependency: lastOp ];
+//    }
+    NSLog(@"add *");
+    [self.dbOperationQueue addOperations:@[operation] waitUntilFinished:YES];
+    
 }
 
 
